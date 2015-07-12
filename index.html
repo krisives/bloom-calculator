@@ -30,7 +30,8 @@
 			<div class="col-md-4">
 				<input id="count" placeholder="300" class="form-control input-md" type="text">
 				<span class="help-block">
-					Number of items you expect to add to the filter.</span>
+					Number of items you expect to add to the filter. You can use
+					basic arithmetic.</span>
 			</div>
 		</div>
 
@@ -66,7 +67,7 @@
 				<div id="size" class="form-control">
 				</div>
 				<span class="help-block">Size of the bloom filter. Usually denoted as
-				<em>m</em> bits. By default this is in bits, but you can also specify "kilobits" or "kilobytes".</span>
+				<em>m</em> bits.</span>
 			</div>
 		</div>
 
@@ -77,20 +78,50 @@
 <script>
 $(function () {
 	var ln = Math.log;
+	var pow = Math.pow;
+	var ceil = Math.ceil;
 	var n = 0, p = 0, k = 0, m = 0;
 
+	function format(x) {
+		x = String(x);
+		var n = x.indexOf('.');
+		if (n <= 0) { return x; }
+		return x.substr(0, n + 3);
+	}
+
+	function evaluate(selector) {
+		var x = $(selector).val();
+
+		if (x.indexOf('*') > 0 || x.indexOf('+') > 0) {
+			x = eval(x);
+		}
+
+		return Number(x);
+	}
+
 	function calculate() {
-		n = Number($("#count").val());
-		p = Number($("#error").val());
-		m = -n * ln(p) / (ln(2)^2);
+		n = evaluate("#count");
+		p = evaluate("#error")
+		m = -n * ln(p) / (pow(ln(2), 2));
 		k = m/n * ln(2);
-		$("#size").text(m);
-		$("#funcs").text(k);
+
+		$("#funcs").text(format(k));
+
+		var bits = ceil(m);
+		var kilobits = bits / 1024;
+		var kilobytes = (bits / 8) / 1024;
+
+		$("#size").text(
+			String(bits) + " bits " +
+			"(" + format(kilobytes) + " KB)"
+		);
 	}
 
 	$("#count,#error").keyup(function (e) {
 		calculate();
 	});
+
+	calculate();
 });
 </script>
 </body>
