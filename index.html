@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Bloom Filter Calculator</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<h1>Bloom Filter Calculator</h1>
+		<p>
+			Enter the size of the bloom filter and the acceptable error rate
+			and you will be shown the optimal configuration. See
+			<a href="http://stackoverflow.com/questions/658439/how-many-hash-functions-does-my-bloom-filter-need">
+				this stack overflow post
+			</a>
+			on how this is computed.
+		</p>
+
+		<form class="form-horizontal">
+		<fieldset>
+
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="count">
+				Count ( <em>n</em> )
+			</label>
+
+			<div class="col-md-4">
+				<input id="count" placeholder="300" class="form-control input-md" type="text">
+				<span class="help-block">
+					Number of items you expect to add to the filter.</span>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="error">
+				Error ( <em>p</em> )
+			</label>
+
+			<div class="col-md-4">
+				<input id="error" placeholder="0.001" class="form-control input-md" type="text">
+				<span class="help-block">Max allowed error (0.01 = 1%)</span>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="funcs">
+				Functions ( <em>k</em> )
+			</label>
+
+			<div class="col-md-4">
+				<div id="funcs" class="form-control">
+				</div>
+				<span class="help-block">Number of hashing functions</span>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="size">
+				Size ( <em>m</em> )
+			</label>
+
+			<div class="col-md-4">
+				<div id="size" class="form-control">
+				</div>
+				<span class="help-block">Size of the bloom filter. Usually denoted as
+				<em>m</em> bits. By default this is in bits, but you can also specify "kilobits" or "kilobytes".</span>
+			</div>
+		</div>
+
+		</fieldset>
+		</form>
+	</div>
+
+<script>
+$(function () {
+	var ln = Math.log;
+	var n = 0, p = 0, k = 0, m = 0;
+
+	function calculate() {
+		n = Number($("#count").val());
+		p = Number($("#error").val());
+		m = -n * ln(p) / (ln(2)^2);
+		k = m/n * ln(2);
+		$("#size").text(m);
+		$("#funcs").text(k);
+	}
+
+	$("#count,#error").keyup(function (e) {
+		calculate();
+	});
+});
+</script>
+</body>
+</html>
