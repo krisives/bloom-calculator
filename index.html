@@ -92,7 +92,7 @@ $(function () {
 	function evaluate(selector) {
 		var x = $(selector).val();
 
-		if (x.indexOf('*') > 0 || x.indexOf('+') > 0) {
+		if (x.indexOf('*') > 0 || x.indexOf('+') > 0 || x.indexOf('/') > 0) {
 			x = eval(x);
 		}
 
